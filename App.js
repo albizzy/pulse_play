@@ -42,11 +42,21 @@ export default function App() {
 
     const { sound, status } = await recording.createNewLoadedSoundAsync();
 
+    // get current date to use in file name
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0].replace(/-/g, '');
+
+    // prefix
+    const prefix = 'Rec';
+
+    // standard naming convention string
+    const standardName = `${prefix}_${formattedDate}`;
+
     setRecordings([...recordings, { // Use the spread operator for arrays
       sound: sound,
       duration: getFormattedDuration(status.durationMillis),
       file: recording.getURI(),
-      name: "",
+      name: standardName,
     }]);
 
   }
