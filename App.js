@@ -7,6 +7,7 @@ import { Audio } from 'expo-av';
 // components
 import RecordingButton from './components/recordingButton';
 import PlayButton from './components/playButton';
+import RenameButton from './components/renameButton';
 import ClearRecordingsButton from "./components/clearRecordingsButton";
 import NoRecordings from './components/noRecordings';
 
@@ -45,6 +46,7 @@ export default function App() {
       sound: sound,
       duration: getFormattedDuration(status.durationMillis),
       file: recording.getURI(),
+      name: "",
     }]);
 
   }
@@ -56,6 +58,7 @@ export default function App() {
 
     return seconds < 10 ? `${Math.floor(minutes)}:0${seconds}` : `${Math.floor(minutes)}:${seconds}`
   }
+  
 
   // get recording lines
   const getRecordingLines = () => {
@@ -66,12 +69,27 @@ export default function App() {
             recordingLine={ recordingLine }
           />
           <Text className='text-gray-200'>
-            Recording #{index + 1} | { recordingLine.duration }
+            {recordingLine.name || `Recording #${index + 1}`} | { recordingLine.duration }
           </Text>
+          <RenameButton
+            index={index}
+            onRename={renameRecording}
+          />
         </View>
       )
     })
   }
+
+  // rename recording
+  const renameRecording = (index, newName) => {
+    const updatedRecordings = recordings.map((recording, i) => {
+      if (i === index) {
+        return { ...recording, name: newName || `Recording #${i + 1}` };
+      }
+      return recording;
+    });
+    setRecordings(updatedRecordings);
+  };  
 
   // clear recordings
   const clearRecordings = () => {
